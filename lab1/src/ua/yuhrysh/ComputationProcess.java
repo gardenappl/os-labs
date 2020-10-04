@@ -6,17 +6,20 @@ import java.io.*;
 
 public class ComputationProcess {
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Error: Please provide 2 arguments.");
-            System.err.println("Usage: ua.yuhrysh.ComputationProcess <input fifo> <output fifo>");
+        if (args.length < 3) {
+            System.err.println("Error: Please provide 3 arguments.");
+            System.err.println("Usage: ua.yuhrysh.ComputationProcess <input fifo> <output fifo> <id>");
             System.exit(1);
             return;
         }
 
+        int id = Integer.parseInt(args[2]);
+        
         try (BufferedReader input = new BufferedReader(new FileReader(args[0]));
                 BufferedWriter output = new BufferedWriter(new FileWriter(args[1]))) {
             String funcName = input.readLine();
             int funcArg = Integer.parseInt(input.readLine());
+            input.close();
             int result;
             try {
                 switch (funcName) {
@@ -33,7 +36,8 @@ public class ComputationProcess {
                 System.exit(1);
                 return;
             }
-            output.write(Integer.toString(result));
+            output.write(Integer.toString(id) + '\n');
+            output.write(Integer.toString(result) + '\n');
         } catch (IOException e) {
             System.err.println("Error: " + e.toString());
         }
