@@ -1,3 +1,5 @@
+package ua.yuhrysh;
+
 import spos.lab1.demo.IntOps;
 
 import java.io.*;
@@ -6,7 +8,7 @@ public class ComputationProcess {
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Error: Please provide 2 arguments.");
-            System.err.println("Usage: ComputationProcess <input fifo> <output fifo>");
+            System.err.println("Usage: ua.yuhrysh.ComputationProcess <input fifo> <output fifo>");
             System.exit(1);
             return;
         }
