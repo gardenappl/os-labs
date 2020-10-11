@@ -1,4 +1,4 @@
-package ua.yuhrysh;
+package ua.yuhrysh.oslab1.compute;
 
 import spos.lab1.demo.IntOps;
 
@@ -8,7 +8,7 @@ public class ComputationProcess {
     public static void main(String[] args) {
         if (args.length < 3) {
             System.err.println("Error: Please provide 3 arguments.");
-            System.err.println("Usage: ua.yuhrysh.ComputationProcess <input fifo> <output fifo> <id>");
+            System.err.println("Usage: ua.yuhrysh.oslab1.compute.ComputationProcess <input fifo> <output fifo> <id>");
             System.exit(1);
             return;
         }
