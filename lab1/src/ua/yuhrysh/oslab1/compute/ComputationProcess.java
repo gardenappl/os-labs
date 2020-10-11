@@ -6,14 +6,12 @@ import java.io.*;
 
 public class ComputationProcess {
     public static void main(String[] args) {
-        if (args.length < 3) {
+        if (args.length < 2) {
             System.err.println("Error: Please provide 3 arguments.");
-            System.err.println("Usage: ua.yuhrysh.oslab1.compute.ComputationProcess <input fifo> <output fifo> <id>");
+            System.err.println("Usage: ua.yuhrysh.oslab1.compute.ComputationProcess <input fifo> <output fifo>");
             System.exit(1);
             return;
         }
-
-        int id = Integer.parseInt(args[2]);
         
         try (BufferedReader input = new BufferedReader(new FileReader(args[0]));
                 BufferedWriter output = new BufferedWriter(new FileWriter(args[1]))) {
@@ -36,7 +34,6 @@ public class ComputationProcess {
                 System.exit(1);
                 return;
             }
-            output.write(Integer.toString(id) + '\n');
             output.write(Integer.toString(result) + '\n');
         } catch (IOException e) {
             System.err.println("Error: " + e.toString());
