@@ -36,6 +36,7 @@ public class ComputationProcess {
                 return;
             }
             output.write(Integer.toString(result) + '\n');
+            System.err.println("Result: " + result);
         } catch (IOException e) {
             System.err.println("Error: " + e.toString());
         }

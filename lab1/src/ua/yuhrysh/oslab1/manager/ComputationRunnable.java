@@ -12,7 +12,7 @@ public class ComputationRunnable implements Runnable {
     private Process process;
     private final int id;
     private final ComputationManager manager;
-    private IntComputation computation;
+    private final IntComputation computation;
     
     public ComputationRunnable(IntComputation computation, int id, ComputationManager manager) {
         this.id = id;
@@ -22,7 +22,6 @@ public class ComputationRunnable implements Runnable {
 
     @Override
     public void run() {
-        System.err.println("Hello");
         String path = manager.getPath();
         File inputPipe = new File(path, id + ".in");
         File outputPipe = new File(path, id + ".out");
@@ -47,18 +46,14 @@ public class ComputationRunnable implements Runnable {
         System.err.println("Started");
         try (BufferedWriter input = new BufferedWriter(new FileWriter(inputPipe));
              BufferedReader output = new BufferedReader(new FileReader(outputPipe))) {
-
-
-            System.err.println("Opened");
+            
             input.write(computation.getType().getInternalName());
             input.newLine();
             input.write(Integer.toString(computation.getArgument()));
             input.newLine();
             input.flush();
-            System.err.println("Written");
 
             String result = output.readLine();
-            System.err.println("Result is " + result);
             if (result != null)
                 manager.onComputationFinished(Integer.parseInt(result), id);
             
@@ -68,7 +63,9 @@ public class ComputationRunnable implements Runnable {
         }
     }
 
-    public void killProcess() {
+    public void killProcess() throws IllegalStateException {
+        if (process == null)
+            throw new IllegalStateException("Can't kill process which has not been started");
         process.destroyForcibly();
     }
 }
