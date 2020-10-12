@@ -1,20 +1,17 @@
 package ua.yuhrysh.oslab1.manager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BinaryOperator;
-import java.util.function.IntBinaryOperator;
 
 public class ComputationManager {
     private final String path;
     private final BinaryOperator<Integer> operator;
     private final List<IntComputation> computations;
 
-    private ComputationRunnable[] runnables;
-    private volatile Thread[] threads;
-    private volatile int[] results;
-    private volatile boolean[] resultAvailable;
+    private final ComputationRunnable[] runnables;
+    private final Thread[] threads;
+    private final int[] results;
+    private final boolean[] resultAvailable;
     
     private boolean cancelled = false;
 

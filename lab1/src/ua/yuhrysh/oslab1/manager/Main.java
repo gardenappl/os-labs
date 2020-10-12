@@ -1,6 +1,5 @@
 package ua.yuhrysh.oslab1.manager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BinaryOperator;

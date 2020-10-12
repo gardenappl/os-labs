@@ -1,12 +1,6 @@
 package ua.yuhrysh.oslab1.manager;
 
-import spos.lab1.demo.IntOps;
-
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
 
 public class ComputationRunnable implements Runnable {
     private Process process;

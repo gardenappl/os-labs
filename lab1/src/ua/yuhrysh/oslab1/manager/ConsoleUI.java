@@ -3,7 +3,6 @@ package ua.yuhrysh.oslab1.manager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Scanner;
 
 public class ConsoleUI implements Runnable {
     //Non-blocking console IO implementation taken from
@@ -22,7 +21,6 @@ public class ConsoleUI implements Runnable {
             setTerminalToCBreak();
             printInstructions();
 
-            int i = 0;
             inputLoop:
             while (!Thread.interrupted()) {
                 if (System.in.available() != 0) {

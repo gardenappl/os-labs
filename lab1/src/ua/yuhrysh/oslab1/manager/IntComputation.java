@@ -17,8 +17,8 @@ public class IntComputation {
         }
     }
     
-    private Type type;
-    private int argument;
+    private final Type type;
+    private final int argument;
 
     public IntComputation(int argument, Type type) {
         this.type = type;
