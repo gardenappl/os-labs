@@ -16,5 +16,5 @@ Then, run this:
 
 ```
 setup.sh
-java -cp 'out/production/lab1/' ua.yuhrysh.oslab1.manager.Main 2> error.log
+java -classpath 'out/production/lab1/' ua.yuhrysh.oslab1.manager.Main 2> error.log
 ```
