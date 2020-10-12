@@ -62,9 +62,9 @@ public class ConsoleUI implements Runnable {
     
     private boolean quitPrompt() throws IOException, InterruptedException {
         clearScreen();
-        System.out.println("----------------------------------------");
-        System.out.println("- Are you sure you want to exit? (y/n) -");
-        System.out.println("----------------------------------------");
+        System.out.println("/--------------------------------------\\");
+        System.out.println("| Are you sure you want to exit? (y/n) |");
+        System.out.println("\\--------------------------------------/");
         System.out.println();
         System.out.println();
         long millisStart = System.currentTimeMillis();
