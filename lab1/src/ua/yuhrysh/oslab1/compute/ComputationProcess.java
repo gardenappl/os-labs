@@ -6,8 +6,9 @@ import java.io.*;
 
 public class ComputationProcess {
     public static void main(String[] args) {
+        System.err.println("Hello from process");
         if (args.length < 2) {
-            System.err.println("Error: Please provide 3 arguments.");
+            System.err.println("Error: Please provide 2 arguments.");
             System.err.println("Usage: ua.yuhrysh.oslab1.compute.ComputationProcess <input fifo> <output fifo>");
             System.exit(1);
             return;
@@ -15,9 +16,9 @@ public class ComputationProcess {
         
         try (BufferedReader input = new BufferedReader(new FileReader(args[0]));
                 BufferedWriter output = new BufferedWriter(new FileWriter(args[1]))) {
+            System.err.println("Begin");
             String funcName = input.readLine();
             int funcArg = Integer.parseInt(input.readLine());
-            input.close();
             int result;
             try {
                 switch (funcName) {
