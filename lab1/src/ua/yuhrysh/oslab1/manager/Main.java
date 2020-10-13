@@ -1,10 +1,19 @@
 package ua.yuhrysh.oslab1.manager;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.function.BinaryOperator;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
+
+        try {
+            System.setErr(new PrintStream("error.log"));
+        } catch (FileNotFoundException e) {
+            System.err.println("Note: can't create error log! Will output debug messages to console.");
+        }
+
         ArrayList<IntComputation> computations = new ArrayList<>();
 
         Scanner scanner = new Scanner(System.in);

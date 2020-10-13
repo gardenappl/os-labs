@@ -16,5 +16,7 @@ Then, run this:
 
 ```
 setup.sh
-java -classpath 'out/production/lab1/' ua.yuhrysh.oslab1.manager.Main 2> error.log
+java -classpath 'out/production/lab1/' ua.yuhrysh.oslab1.manager.Main
 ```
+
+(do this in a separate terminal as your IDE's builtin terminal might not support it)
