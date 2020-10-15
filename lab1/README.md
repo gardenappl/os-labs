@@ -8,6 +8,8 @@
 
 This program is written for Linux only, and requires Java 8.
 
+Relies on the IntOps class provided by the `lab1.jar` library.
+
 ### Testing
 
 First, build the .class files, they should be in `out/production/lab1`.
