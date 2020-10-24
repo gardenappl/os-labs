@@ -4,7 +4,10 @@ public class IntComputation {
     
     public enum Type {
         F("f"),
-        G("g");
+        G("g"),
+        ZERO("zero"),
+        A("a"),
+        FREEZE("freeze");
 
         private final String internalName;
 

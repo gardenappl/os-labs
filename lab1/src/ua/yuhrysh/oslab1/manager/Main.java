@@ -18,7 +18,7 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print("Enter function name (f or g), or 'start' to start computations: ");
+            System.out.print("Enter function name ('f', 'g', 'a', 'zero' or 'freeze'), or 'start' to start computations: ");
             String input = scanner.nextLine();
 
             if (input.equalsIgnoreCase("start")) {
@@ -49,7 +49,8 @@ public class Main {
                 arg = Integer.parseInt(input);
             } catch (NumberFormatException ignored) {
             }
-            if (arg < 0 || arg > 5) {
+            if ((computationType == IntComputation.Type.F || computationType == IntComputation.Type.G) &&
+                    (arg < 0 || arg > 5)) {
                 System.out.println("Invalid argument. Please enter integer in the [0; 5] range.");
                 continue;
             }

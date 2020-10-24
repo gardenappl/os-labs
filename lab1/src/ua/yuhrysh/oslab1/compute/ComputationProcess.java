@@ -24,6 +24,9 @@ public class ComputationProcess {
                 switch (funcName) {
                     case "f" -> result = IntOps.funcF(funcArg);
                     case "g" -> result = IntOps.funcG(funcArg);
+                    case "zero" -> result = funcZero(funcArg);
+                    case "a" -> result = funcA(funcArg);
+                    case "freeze" -> result = funcFreeze(funcArg);
                     default -> {
                         System.err.println("Wrong function name");
                         System.exit(1);
@@ -40,6 +43,22 @@ public class ComputationProcess {
         } catch (IOException e) {
             System.err.println("Error: " + e.toString());
         }
+    }
+    
+    private static int funcFreeze(int argument) throws InterruptedException {
+        while (true) {
+            Thread.sleep(1000);
+        }
+    }
+
+    private static int funcA(int argument) throws InterruptedException {
+        Thread.sleep(1000 * argument);
+        return argument * 2;
+    }
+    
+    private static int funcZero(int argument) throws InterruptedException {
+        Thread.sleep(1000 * argument);
+        return 0;
     }
 }
 
