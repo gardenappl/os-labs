@@ -11,6 +11,7 @@ public class ConsoleUI implements Runnable {
     private static String ttyConfig;
     
     private final ComputationManager manager;
+    private boolean isPrompted;
     
     public ConsoleUI(ComputationManager manager) {
         this.manager = manager;
@@ -59,6 +60,7 @@ public class ConsoleUI implements Runnable {
     }
     
     private boolean quitPrompt() throws IOException, InterruptedException {
+        isPrompted = true;
         clearScreen();
         System.out.println("/--------------------------------------\\");
         System.out.println("| Are you sure you want to exit? (y/n) |");
@@ -71,8 +73,10 @@ public class ConsoleUI implements Runnable {
             if (System.in.available() != 0) {
                 switch (System.in.read()) {
                     case 'n':
+                        isPrompted = false;
                         return false;
                     case 'y':
+                        isPrompted = false;
                         return true;
                 }
             }
@@ -86,6 +90,7 @@ public class ConsoleUI implements Runnable {
 
             Thread.sleep(100);
         }
+        isPrompted = false;
         return true;
     }
     
@@ -99,6 +104,9 @@ public class ConsoleUI implements Runnable {
         }
     }
 
+    public boolean isPrompted() {
+        return isPrompted;
+    }
 
 
     private static void clearScreen() {

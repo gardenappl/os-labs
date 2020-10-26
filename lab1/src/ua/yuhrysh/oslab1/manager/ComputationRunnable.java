@@ -49,7 +49,7 @@ public class ComputationRunnable implements Runnable {
 
             String result = output.readLine();
             if (result != null)
-                manager.onComputationFinished(Integer.parseInt(result), id);
+                manager.onComputationFinished(Integer.parseInt(result), id, computation);
             
         } catch (Exception e) {
             System.err.println("Error: " + e.toString());

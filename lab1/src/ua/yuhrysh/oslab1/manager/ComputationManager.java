@@ -12,6 +12,8 @@ public class ComputationManager {
     private final Thread[] threads;
     private final int[] results;
     private final boolean[] resultAvailable;
+
+    private ConsoleUI consoleUI;
     
     private boolean cancelled = false;
 
@@ -32,10 +34,14 @@ public class ComputationManager {
     }
 
     //Called from ComputationRunnable threads
-    synchronized void onComputationFinished(int result, int id) {
+    synchronized void onComputationFinished(int result, int id, IntComputation computation) {
         results[id] = result;
         resultAvailable[id] = true;
+
         System.err.println("Result on " + id + " is " + result);
+        if (!consoleUI.isPrompted())
+            printSubResult(computation, result);
+
         if (result == 0) {
             System.err.println("Result is 0, killing...");
             stop();
@@ -61,7 +67,7 @@ public class ComputationManager {
             threads[i].start();
         }
 
-        ConsoleUI consoleUI = new ConsoleUI(this);
+        consoleUI = new ConsoleUI(this);
         Thread uiThread = new Thread(consoleUI);
         uiThread.start();
         
@@ -99,5 +105,10 @@ public class ComputationManager {
                 );
             }
         }
+    }
+
+    public synchronized void printSubResult(IntComputation computation, int result) {
+        System.out.println(computation.getType().getInternalName() + '(' +
+                computation.getArgument() + ") = " + result);
     }
 }
