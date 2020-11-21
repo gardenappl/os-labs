@@ -22,7 +22,7 @@ public class SchedulingAlgorithm {
       //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
       //OutputStream out = new FileOutputStream(resultsFile);
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
-      sProcess process = (sProcess) processVector.elementAt(currentProcess);
+      Process process = (Process) processVector.elementAt(currentProcess);
       out.println("Process: " + currentProcess + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.cpudone + ")");
       while (comptime < runtime) {
         if (process.cpudone == process.cputime) {
@@ -34,12 +34,12 @@ public class SchedulingAlgorithm {
             return result;
           }
           for (i = size - 1; i >= 0; i--) {
-            process = (sProcess) processVector.elementAt(i);
+            process = (Process) processVector.elementAt(i);
             if (process.cpudone < process.cputime) { 
               currentProcess = i;
             }
           }
-          process = (sProcess) processVector.elementAt(currentProcess);
+          process = (Process) processVector.elementAt(currentProcess);
           out.println("Process: " + currentProcess + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.cpudone + ")");
         }      
         if (process.ioblocking == process.ionext) {
@@ -48,12 +48,12 @@ public class SchedulingAlgorithm {
           process.ionext = 0; 
           previousProcess = currentProcess;
           for (i = size - 1; i >= 0; i--) {
-            process = (sProcess) processVector.elementAt(i);
+            process = (Process) processVector.elementAt(i);
             if (process.cpudone < process.cputime && previousProcess != i) { 
               currentProcess = i;
             }
           }
-          process = (sProcess) processVector.elementAt(currentProcess);
+          process = (Process) processVector.elementAt(currentProcess);
           out.println("Process: " + currentProcess + " registered... (" + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.cpudone + ")");
         }        
         process.cpudone++;       
