@@ -111,7 +111,7 @@ public class Scheduling {
             int blockTime = (int) (rng.nextGaussian() * runTimeStddev + runTimeMean);
             processes.addElement(new Process(runTime, blockTime, ownerIds.get(i)));
         }
-        Results result = SchedulingAlgorithm.run(maxRuntime, processes);
+        Results result = SchedulingAlgorithm.run(maxRuntime, quantum, processes);
 
 
         //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
