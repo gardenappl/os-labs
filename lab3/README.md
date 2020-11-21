@@ -11,9 +11,12 @@ loads defined by the instructor.
 
 ### My changes and improvements
 
+* **Implemented Fair-share scheduling**
 * Moved code to the package `com.prenticehall.moss.sched`
 * Got rid of useless `Common` utlities class
 * Renamed `sProcess` to `Process`
 * Use generics
 * Better exception handling
 * Updated documentation
+* Add quantum parameter
+* Add owner ID parameter

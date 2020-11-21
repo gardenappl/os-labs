@@ -8,12 +8,19 @@ import java.util.*;
 import java.io.*;
 
 public class SchedulingAlgorithm {
-    private int totalRuntime = 0;
+    private final PrintStream printStream;
+    private Results result;
+
+    private Vector<Process> processes;
+
+    //How much time has the current user (and associated process) worked without interruption
     private int userQuantTime = 0;
     private HashMap<Integer, Integer> processQuantTimes;
-    private Vector<Process> processes;
-    private final PrintStream printStream;
+    //Queues for users with ready processes, and the ready processes themselves
+    private Deque<Integer> userRoundRobin;
+    private HashMap<Integer, Deque<Integer>> processRoundRobins;
 
+    
     public SchedulingAlgorithm(String resultsFile) throws IOException {
         this.printStream = new PrintStream(new FileOutputStream(resultsFile));
     }
@@ -21,12 +28,9 @@ public class SchedulingAlgorithm {
     public Results run(int maxRuntime, int quantum, Vector<Process> processes) {
         this.processes = processes;
 
-        Results result = new Results("Fair-share", 0);
+        result = new Results("Fair-share", 0);
 
-        totalRuntime = 0;
-
-        //Queue for users
-        Deque<Integer> userRoundRobin = new LinkedList<>();
+        userRoundRobin = new LinkedList<>();
         Set<Integer> knownUsers = new HashSet<>(processes.size());
 
         for (Process process : processes) {
@@ -37,8 +41,7 @@ public class SchedulingAlgorithm {
             }
         }
 
-        //Queue for processes, separate queue for each user
-        HashMap<Integer, Deque<Integer>> processRoundRobins = new HashMap<>(knownUsers.size());
+        processRoundRobins = new HashMap<>(knownUsers.size());
         for (int userId : knownUsers)
             processRoundRobins.put(userId, new LinkedList<>());
 
@@ -47,12 +50,24 @@ public class SchedulingAlgorithm {
             processRoundRobins.get(process.userId).add(processId);
         }
 
-        //How much time has the current user (and associated process) worked without interruption
         processQuantTimes = new HashMap<>(knownUsers.size());
+        for (int userId : knownUsers)
+            processQuantTimes.put(userId, 0);
         userQuantTime = 0;
         final int USER_QUANT_MULTIPLIER = 3;
 
-        while (totalRuntime < maxRuntime && !userRoundRobin.isEmpty()) {
+        boolean lastStepAllEmpty = false;
+        while (result.totalTime < maxRuntime && !processes.isEmpty()) {
+            //Ensure current user has ready processes
+            if (userRoundRobin.isEmpty()) {
+                if (!lastStepAllEmpty) {
+                    log("Process queues for all users are empty, no current process ID...");
+                    lastStepAllEmpty = true;
+                }
+                updateAllProcesses(-1);
+                continue;
+            }
+            
             //Do round-robin for users
             if (userQuantTime % (quantum * USER_QUANT_MULTIPLIER) == 0) {
                 log("Quant time expired for user ID %d", userRoundRobin.peekFirst());
@@ -61,46 +76,70 @@ public class SchedulingAlgorithm {
 
             int userId = userRoundRobin.peekFirst();
             Deque<Integer> processRoundRobin = processRoundRobins.get(userId);
-            int processQuantTime = processQuantTimes.get(userId);
-
+            
 
             //Do round-robin for processes
-            if (processQuantTime % quantum == 0) {
+            if (processQuantTimes.get(userId) % quantum == 0) {
                 log("Quant time expired for process ID %d", processRoundRobin.peekFirst());
                 scheduleNextProcess(processRoundRobin, userId);
             }
 
             int processId = processRoundRobin.peekFirst();
 
-
-            //Update current process
-
-
-            processQuantTimes.put(userId, processQuantTime + 1);
-            userQuantTime++;
-            totalRuntime++;
+            updateAllProcesses(processId);
         }
         return result;
+    }
+    
+    private void updateAllProcesses(int selectedProcessId) {
+        for (int processId = 0; processId < processes.size(); processId++) {
+            Process process = processes.get(processId);
+
+            if (isBlockedIO(process)) {
+                //log("blocked %s", getProcessInfo(processId));
+                process.currentBlockTime++;
+
+                //process is now ready
+                if (!isBlockedIO(process)) {
+                    process.currentRunTime = 0;
+                    process.currentBlockTime = 0;
+                    log("Process is now ready, pushing to queue: %s", getProcessInfo(processId));
+                    processRoundRobins.get(process.userId).addLast(processId);
+                    if (!userRoundRobin.contains(process.userId)) {
+                        log("User %d now has ready processes, pushing to queue...", process.userId);
+                        userRoundRobin.addLast(process.userId);
+                    }
+                }
+            } else if (processId == selectedProcessId) {
+                //log("running %s", getProcessInfo(processId));
+                process.currentRunTime++;
+                process.totalRunTime++;
+                int processQuantTime = processQuantTimes.get(process.userId);
+                processQuantTimes.put(process.userId, processQuantTime + 1);
+                userQuantTime++;
+                
+                //process no longer ready
+                if (isBlockedIO(process)) {
+                    process.numBlocked++;
+                    log("Process is now blocked, removing from queue: %s", getProcessInfo(processId));
+                    processRoundRobins.get(process.userId).removeFirst();
+                    if (processRoundRobins.get(process.userId).isEmpty()) {
+                        log("User %d now has 0 ready processes, removing from queue...", process.userId);
+                        userRoundRobin.removeFirst();
+                    }
+                }
+            } /*else {
+                log("ready %s", getProcessInfo(processId));
+            }*/
+        }
+        result.totalTime++;
     }
 
     private String getProcessInfo(int processId) {
         Process process = processes.get(processId);
-        return String.format("Process #%d (%d/%d ms, I/O block every %d ms)",
-                processId, process.totalRunTime, process.runTime, process.blockTime);
-    }
-
-    /**
-     * Simulate one ms passing for a process.
-     * Will increment run time if it's currently scheduled,
-     * or increment block time if it's I/O blocked.
-     *
-     * @param currentlyScheduled true if this process is currently running on the CPU
-     */
-    private static void updateProcess(Process process, boolean currentlyScheduled) {
-        if (currentlyScheduled) {
-            process.totalRunTime++;
-            process.currentRunTime++;
-        }
+        return String.format("Process #%d (running %d/%d ms, blocking %d/%d ms, owner: %d)",
+                processId, process.currentRunTime, process.runTime,
+                process.currentBlockTime, process.blockTime, process.userId);
     }
 
     /**
@@ -116,35 +155,63 @@ public class SchedulingAlgorithm {
      * Print current run time and a formatted message
      *
      * @param format format string, passed into pritnf
-     * @param o      format arguments, passed into printf
+     * @param args      format arguments, passed into printf
      */
-    private void log(String format, Object... o) {
-        printStream.printf("%d :: " + format, totalRuntime, o);
+    private void log(String format, Object... args) {
+        log(String.format(format, args));
     }
 
     /**
-     * Push current process to the end of the deque
+     * Print current run time and an object
+     *
+     * @param message object which will be printed as a message
      */
-    private void scheduleNextProcess(Deque<Integer> processRoundRobin, int userId) {
+    private void log(Object message) {
+        if (message == null)
+            log("null");
+        else
+            log(message.toString());
+    }
+
+
+    /**
+     * Print current run time and a string. Prints to output file and to standard output.
+     *
+     * @param message message string
+     */
+    private void log(String message) {
+        System.out.println(result.totalTime + " :: " + message);
+        printStream.println(result.totalTime + " :: " + message);
+    }
+    
+
+    /**
+     * Push current process to the end of the deque
+     * @return processId of next process
+     */
+    private int scheduleNextProcess(Deque<Integer> processRoundRobin, int userId) {
         processQuantTimes.put(userId, 0);
 
-        int processId = processRoundRobin.pollFirst();
+        int processId = processRoundRobin.removeFirst();
         processRoundRobin.addLast(processId);
 
         int nextProcessId = processRoundRobin.peekFirst();
         log("Scheduling process %s", getProcessInfo(nextProcessId));
+        return nextProcessId;
     }
 
     /**
      * Push current user to the end of the deque
+     * @return id of next user
      */
-    private void scheduleNextUser(Deque<Integer> userRoundRobin) {
+    private int scheduleNextUser(Deque<Integer> userRoundRobin) {
         userQuantTime = 0;
 
-        int userId = userRoundRobin.pollFirst();
+        int userId = userRoundRobin.removeFirst();
         userRoundRobin.addLast(userId);
 
         int nextUserId = userRoundRobin.peekFirst();
         log("Scheduling user #%d", nextUserId);
+        return nextUserId;
     }
 }

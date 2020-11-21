@@ -23,7 +23,7 @@ public class Scheduling {
     private int blockTimeStddev;
     private int processCount;
     private int quantum;
-    private ArrayList<Integer> ownerIds;
+    private ArrayList<Integer> ownerIds = new ArrayList<>();
     private boolean initialized = false;
 
     public void init(File file) throws IOException, IllegalConfigFileException {
@@ -72,6 +72,10 @@ public class Scheduling {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
                     ownerIds.add(Integer.parseInt(st.nextToken()));
+                } else if (line.startsWith("quantum")) {
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.nextToken();
+                    quantum = Integer.parseInt(st.nextToken());
                 }
             }
 
@@ -87,6 +91,8 @@ public class Scheduling {
                 throw new IllegalConfigFileException("Block time std. deviation must be defined and >= 0");
             if (maxRuntime < 0)
                 throw new IllegalConfigFileException("Max. runtime must be defined and >= 0");
+            if (quantum <= 0)
+                throw new IllegalConfigFileException("Quantum must be defined and > 0");
             if (ownerIds.size() != processCount)
                 throw new IllegalConfigFileException("Wrong number of owner IDs");
 
@@ -107,17 +113,18 @@ public class Scheduling {
         Vector<Process> processes = new Vector<>(processCount);
 
         for (int i = 0; i < processCount; i++) {
-            int runTime = (int) (rng.nextGaussian() * runTimeStddev + runTimeMean);
-            int blockTime = (int) (rng.nextGaussian() * runTimeStddev + runTimeMean);
+            int runTime = (int)Math.max(1, rng.nextGaussian() * runTimeStddev + runTimeMean);
+            int blockTime = (int)Math.max(1, rng.nextGaussian() * blockTimeStddev + blockTimeMean);
             processes.addElement(new Process(runTime, blockTime, ownerIds.get(i)));
         }
-        Results result = SchedulingAlgorithm.run(maxRuntime, quantum, processes);
+        SchedulingAlgorithm algorithm = new SchedulingAlgorithm("Summary-Processes");
+        Results result = algorithm.run(maxRuntime, quantum, processes);
 
 
         //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
         PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
         out.println("Scheduling Name: " + result.schedulingName);
-        out.println("Simulation Run Time: " + result.compuTime);
+        out.println("Simulation Run Time: " + result.totalTime);
         out.println("Mean: " + runTimeMean);
         out.println("Standard Deviation: " + runTimeStddev);
         out.println("Process #\t\tRuntime\tBlock time\tActual runtime\tTimes blocked");
