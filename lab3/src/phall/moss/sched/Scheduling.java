@@ -7,12 +7,11 @@
 
 // Created by Alexander Reeder, 2001 January 06
 
+package phall.moss.sched;
+
 import java.io.*;
 import java.util.*;
-/*import sProcess;
-import Common;
-import Results;
-import SchedulingAlgorithm;*/
+
 
 public class Scheduling {
 
@@ -88,6 +87,9 @@ public class Scheduling {
     }
 
     public static void main(String[] args) {
+        for (int i = 0; i < 100; i++)
+            System.out.println(Common.R1());
+        
         int i = 0;
 
         if (args.length != 1) {

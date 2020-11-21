@@ -2,6 +2,8 @@
 // the scheduling algorithm written by the user resides.
 // User modification should occur within the Run() function.
 
+package phall.moss.sched;
+
 import java.util.Vector;
 import java.io.*;
 

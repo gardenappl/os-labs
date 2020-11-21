@@ -1,3 +1,6 @@
+package phall.moss.sched;
+
+
 public class Process {
     public int cputime;
     public int ioblocking;

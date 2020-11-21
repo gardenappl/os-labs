@@ -1,3 +1,6 @@
+package phall.moss.sched;
+
+
 public class Results {
     public String schedulingType;
     public String schedulingName;
