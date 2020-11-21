@@ -1,18 +1,16 @@
 package com.prenticehall.moss.sched;
 
 
-public class Process {
-    public int cputime;
-    public int ioblocking;
-    public int cpudone;
-    public int ionext;
-    public int numblocked;
+class Process {
+    public final int runTime;
+    public final int blockTime;
+    public int numBlocked = 0;
+    public int currentRunTime = 0;
+    public int totalRunTime = 0;
+    public final int userId = 0;
 
-    public Process(int cputime, int ioblocking, int cpudone, int ionext, int numblocked) {
-        this.cputime = cputime;
-        this.ioblocking = ioblocking;
-        this.cpudone = cpudone;
-        this.ionext = ionext;
-        this.numblocked = numblocked;
+    Process(int runTime, int blockTime, int userId) {
+        this.runTime = runTime;
+        this.blockTime = blockTime;
     }
 }

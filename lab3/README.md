@@ -13,6 +13,7 @@ loads defined by the instructor.
 
 * Moved code to the package `com.prenticehall.moss.sched`
 * Got rid of useless `Common` utlities class
+* Renamed `sProcess` to `Process`
 * Use generics
 * Better exception handling
 * Updated documentation

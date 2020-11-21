@@ -14,147 +14,144 @@ import java.util.*;
 
 
 public class Scheduling {
-
-    private static int processnum = 5;
-    private static int meanDev = 1000;
-    private static int standardDev = 100;
-    private static int runtime = 1000;
-    private static final Vector<Process> processVector = new Vector<>();
-    private static Results result = new Results("null", "null", 0);
     private static final String resultsFile = "Summary-Results";
     private static final Random rng = new Random();
+    private int maxRuntime;
+    private int runTimeMean;
+    private int runTimeStddev;
+    private int blockTimeMean;
+    private int blockTimeStddev;
+    private int processCount;
+    private int quantum;
+    private ArrayList<Integer> ownerIds;
+    private boolean initialized = false;
 
-    private static void Init(String file) throws IOException, NumberFormatException {
-        File f = new File(file);
+    public void init(File file) throws IOException, IllegalConfigFileException {
         String line;
         int lineNumber = 0;
 
+        processCount = -1;
+        maxRuntime = -1;
+        runTimeMean = -1;
+        runTimeStddev = -1;
+        blockTimeMean = -1;
+        blockTimeStddev = -1;
+        quantum = -1;
+        ownerIds.clear();
+
+
         try {
-            BufferedReader in = new BufferedReader(new FileReader(f));
-            //DataInputStream in = new DataInputStream(new FileInputStream(f));
+            BufferedReader in = new BufferedReader(new FileReader(file));
             while ((line = in.readLine()) != null) {
                 lineNumber++;
-                if (line.startsWith("numprocess")) {
+                if (line.startsWith("num_process")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    processnum = Integer.parseInt(st.nextToken());
-                }
-                if (line.startsWith("meandev")) {
+                    processCount = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("run_time_mean")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    meanDev = Integer.parseInt(st.nextToken());
-                }
-                if (line.startsWith("standdev")) {
+                    runTimeMean = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("run_time_stddev")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    standardDev = Integer.parseInt(st.nextToken());
-                }
-                if (line.startsWith("process")) {
+                    runTimeStddev = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("block_time_mean")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    int ioblocking = Integer.parseInt(st.nextToken());
-                    int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
-                    processVector.addElement(new Process(cputime, ioblocking, 0, 0, 0));
-                }
-                if (line.startsWith("runtime")) {
+                    blockTimeMean = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("block_time_stddev")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    runtime = Integer.parseInt(st.nextToken());
+                    blockTimeStddev = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("max_runtime")) {
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.nextToken();
+                    maxRuntime = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("process_owner")) {
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.nextToken();
+                    ownerIds.add(Integer.parseInt(st.nextToken()));
                 }
             }
-            in.close();
+
+            if (processCount <= 0)
+                throw new IllegalConfigFileException("Process count must be defined and > 0");
+            if (runTimeMean <= 0)
+                throw new IllegalConfigFileException("Mean run time must be defined and > 0");
+            if (runTimeStddev < 0)
+                throw new IllegalConfigFileException("Run time std. deviation must be defined and >= 0");
+            if (blockTimeMean <= 0)
+                throw new IllegalConfigFileException("Mean block time must be defined and > 0");
+            if (blockTimeStddev < 0)
+                throw new IllegalConfigFileException("Block time std. deviation must be defined and >= 0");
+            if (maxRuntime < 0)
+                throw new IllegalConfigFileException("Max. runtime must be defined and >= 0");
+            if (ownerIds.size() != processCount)
+                throw new IllegalConfigFileException("Wrong number of owner IDs");
+
+            initialized = true;
+
         } catch (NumberFormatException e) {
             System.err.printf("Invalid number on line %d of %s:\n", lineNumber, file);
             System.err.println(e.getLocalizedMessage());
-            throw e;
+            throw new IllegalConfigFileException(e);
         }
     }
 
-    private static void debug() {
-        int i = 0;
+    public void run() throws IOException {
+        if (!initialized)
+            throw new IllegalStateException("Must be initialized first.");
 
-        System.out.println("processnum " + processnum);
-        System.out.println("meandevm " + meanDev);
-        System.out.println("standdev " + standardDev);
-        int size = processVector.size();
-        for (i = 0; i < size; i++) {
-            Process process = processVector.elementAt(i);
-            System.out.println("process " + i + " " + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.numblocked);
-        }
-        System.out.println("runtime " + runtime);
-    }
-
-    public static void main(String[] args) {
-        if (args.length != 1) {
-            System.out.println("Usage: 'java Scheduling <INIT FILE>'");
-            System.exit(-1);
-        }
-        File f = new File(args[0]);
-        if (!(f.exists())) {
-            System.out.println("Scheduling: error, file '" + f.getName() + "' does not exist.");
-            System.exit(-1);
-        }
-        if (!(f.canRead())) {
-            System.out.println("Scheduling: error, read of " + f.getName() + " failed.");
-            System.exit(-1);
-        }
         System.out.println("Working...");
-        try {
-            Init(args[0]);
-            if (processVector.size() < processnum) {
-                int i = 0;
-                while (processVector.size() < processnum) {
-                    int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
-                    processVector.addElement(new Process(cputime, i * 100, 0, 0, 0));
-                    i++;
-                }
-            }
-            result = SchedulingAlgorithm.Run(runtime, processVector, result);
-            
-            //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
-            PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
-            out.println("Scheduling Type: " + result.schedulingType);
-            out.println("Scheduling Name: " + result.schedulingName);
-            out.println("Simulation Run Time: " + result.compuTime);
-            out.println("Mean: " + meanDev);
-            out.println("Standard Deviation: " + standardDev);
-            out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked");
-            for (int i = 0; i < processVector.size(); i++) {
-                Process process = processVector.elementAt(i);
-                out.print(i);
-                if (i < 100) {
-                    out.print("\t\t");
-                } else {
-                    out.print("\t");
-                }
-                out.print(process.cputime);
-                if (process.cputime < 100) {
-                    out.print(" (ms)\t\t");
-                } else {
-                    out.print(" (ms)\t");
-                }
-                out.print(process.ioblocking);
-                if (process.ioblocking < 100) {
-                    out.print(" (ms)\t\t");
-                } else {
-                    out.print(" (ms)\t");
-                }
-                out.print(process.cpudone);
-                if (process.cpudone < 100) {
-                    out.print(" (ms)\t\t");
-                } else {
-                    out.print(" (ms)\t");
-                }
-                out.println(process.numblocked + " times");
-            }
-            out.close();
+        Vector<Process> processes = new Vector<>(processCount);
 
-            System.out.println("Completed.");
-        } catch (IOException e) {
-            System.err.println("I/O error: ");
-            e.printStackTrace();
-            System.exit(-1);
+        for (int i = 0; i < processCount; i++) {
+            int runTime = (int) (rng.nextGaussian() * runTimeStddev + runTimeMean);
+            int blockTime = (int) (rng.nextGaussian() * runTimeStddev + runTimeMean);
+            processes.addElement(new Process(runTime, blockTime, ownerIds.get(i)));
         }
+        Results result = SchedulingAlgorithm.run(maxRuntime, processes);
+
+
+        //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
+        PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
+        out.println("Scheduling Name: " + result.schedulingName);
+        out.println("Simulation Run Time: " + result.compuTime);
+        out.println("Mean: " + runTimeMean);
+        out.println("Standard Deviation: " + runTimeStddev);
+        out.println("Process #\t\tRuntime\tBlock time\tActual runtime\tTimes blocked");
+        for (int i = 0; i < processes.size(); i++) {
+            Process process = processes.elementAt(i);
+            out.print(i);
+            if (i < 100) {
+                out.print("\t\t");
+            } else {
+                out.print("\t");
+            }
+            out.print(process.runTime);
+            if (process.runTime < 100) {
+                out.print(" (ms)\t\t");
+            } else {
+                out.print(" (ms)\t");
+            }
+            out.print(process.blockTime);
+            if (process.blockTime < 100) {
+                out.print(" (ms)\t\t");
+            } else {
+                out.print(" (ms)\t");
+            }
+            out.print(process.totalRunTime);
+            if (process.totalRunTime < 100) {
+                out.print(" (ms)\t\t");
+            } else {
+                out.print(" (ms)\t");
+            }
+            out.println(process.numBlocked + " times");
+        }
+        out.close();
+
+        System.out.println("Completed.");
     }
 }
 

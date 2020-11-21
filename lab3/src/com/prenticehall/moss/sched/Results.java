@@ -1,13 +1,11 @@
 package com.prenticehall.moss.sched;
 
 
-public class Results {
-    public String schedulingType;
+class Results {
     public String schedulingName;
     public int compuTime;
 
-    public Results(String schedulingType, String schedulingName, int compuTime) {
-        this.schedulingType = schedulingType;
+    Results(String schedulingName, int compuTime) {
         this.schedulingName = schedulingName;
         this.compuTime = compuTime;
     }
