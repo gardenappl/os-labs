@@ -7,7 +7,7 @@
 
 // Created by Alexander Reeder, 2001 January 06
 
-package phall.moss.sched;
+package com.prenticehall.moss.sched;
 
 import java.io.*;
 import java.util.*;
@@ -24,7 +24,7 @@ public class Scheduling {
     private static final String resultsFile = "Summary-Results";
     private static final Random rng = new Random();
 
-    private static void Init(String file) {
+    private static void Init(String file) throws IOException, NumberFormatException {
         File f = new File(file);
         String line;
         int lineNumber = 0;
@@ -66,8 +66,7 @@ public class Scheduling {
         } catch (NumberFormatException e) {
             System.err.printf("Invalid number on line %d of %s:\n", lineNumber, file);
             System.err.println(e.getLocalizedMessage());
-        } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -86,8 +85,6 @@ public class Scheduling {
     }
 
     public static void main(String[] args) {
-        int i = 0;
-
         if (args.length != 1) {
             System.out.println("Usage: 'java Scheduling <INIT FILE>'");
             System.exit(-1);
@@ -102,17 +99,18 @@ public class Scheduling {
             System.exit(-1);
         }
         System.out.println("Working...");
-        Init(args[0]);
-        if (processVector.size() < processnum) {
-            i = 0;
-            while (processVector.size() < processnum) {
-                int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
-                processVector.addElement(new Process(cputime, i * 100, 0, 0, 0));
-                i++;
-            }
-        }
-        result = SchedulingAlgorithm.Run(runtime, processVector, result);
         try {
+            Init(args[0]);
+            if (processVector.size() < processnum) {
+                int i = 0;
+                while (processVector.size() < processnum) {
+                    int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
+                    processVector.addElement(new Process(cputime, i * 100, 0, 0, 0));
+                    i++;
+                }
+            }
+            result = SchedulingAlgorithm.Run(runtime, processVector, result);
+            
             //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
             PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
             out.println("Scheduling Type: " + result.schedulingType);
@@ -121,27 +119,27 @@ public class Scheduling {
             out.println("Mean: " + meanDev);
             out.println("Standard Deviation: " + standardDev);
             out.println("Process #\tCPU Time\tIO Blocking\tCPU Completed\tCPU Blocked");
-            for (i = 0; i < processVector.size(); i++) {
-                Process process = (Process) processVector.elementAt(i);
-                out.print(Integer.toString(i));
+            for (int i = 0; i < processVector.size(); i++) {
+                Process process = processVector.elementAt(i);
+                out.print(i);
                 if (i < 100) {
                     out.print("\t\t");
                 } else {
                     out.print("\t");
                 }
-                out.print(Integer.toString(process.cputime));
+                out.print(process.cputime);
                 if (process.cputime < 100) {
                     out.print(" (ms)\t\t");
                 } else {
                     out.print(" (ms)\t");
                 }
-                out.print(Integer.toString(process.ioblocking));
+                out.print(process.ioblocking);
                 if (process.ioblocking < 100) {
                     out.print(" (ms)\t\t");
                 } else {
                     out.print(" (ms)\t");
                 }
-                out.print(Integer.toString(process.cpudone));
+                out.print(process.cpudone);
                 if (process.cpudone < 100) {
                     out.print(" (ms)\t\t");
                 } else {
@@ -150,8 +148,13 @@ public class Scheduling {
                 out.println(process.numblocked + " times");
             }
             out.close();
-        } catch (IOException e) { /* Handle exceptions */ }
-        System.out.println("Completed.");
+
+            System.out.println("Completed.");
+        } catch (IOException e) {
+            System.err.println("I/O error: ");
+            e.printStackTrace();
+            System.exit(-1);
+        }
     }
 }
 

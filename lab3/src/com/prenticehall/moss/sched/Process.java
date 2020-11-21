@@ -1,4 +1,4 @@
-package phall.moss.sched;
+package com.prenticehall.moss.sched;
 
 
 public class Process {
