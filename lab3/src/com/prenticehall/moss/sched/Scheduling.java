@@ -22,8 +22,10 @@ public class Scheduling {
     private int blockTimeMean;
     private int blockTimeStddev;
     private int processCount;
-    private int quantum;
+    private int quantumProcess;
+    private int quantumUser;
     private ArrayList<Integer> ownerIds = new ArrayList<>();
+    private ArrayList<Integer> maxTimes = new ArrayList<>();
     private boolean initialized = false;
 
     public void init(File file) throws IOException, IllegalConfigFileException {
@@ -36,7 +38,8 @@ public class Scheduling {
         runTimeStddev = -1;
         blockTimeMean = -1;
         blockTimeStddev = -1;
-        quantum = -1;
+        quantumProcess = -1;
+        quantumUser = -1;
         ownerIds.clear();
 
 
@@ -72,10 +75,18 @@ public class Scheduling {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
                     ownerIds.add(Integer.parseInt(st.nextToken()));
-                } else if (line.startsWith("quantum")) {
+                } else if (line.startsWith("quantum_process")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    quantum = Integer.parseInt(st.nextToken());
+                    quantumProcess = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("quantum_user")) {
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.nextToken();
+                    quantumUser = Integer.parseInt(st.nextToken());
+                } else if (line.startsWith("run_total")) {
+                    StringTokenizer st = new StringTokenizer(line);
+                    st.nextToken();
+                    maxTimes.add(Integer.parseInt(st.nextToken()));
                 }
             }
 
@@ -85,16 +96,21 @@ public class Scheduling {
                 throw new IllegalConfigFileException("Mean run time must be defined and > 0");
             if (runTimeStddev < 0)
                 throw new IllegalConfigFileException("Run time std. deviation must be defined and >= 0");
-            if (blockTimeMean <= 0)
-                throw new IllegalConfigFileException("Mean block time must be defined and > 0");
+            if (blockTimeMean < 0)
+                throw new IllegalConfigFileException("Mean block time must be defined and >= 0");
             if (blockTimeStddev < 0)
                 throw new IllegalConfigFileException("Block time std. deviation must be defined and >= 0");
             if (maxRuntime < 0)
                 throw new IllegalConfigFileException("Max. runtime must be defined and >= 0");
-            if (quantum <= 0)
+            if (quantumProcess <= 0)
                 throw new IllegalConfigFileException("Quantum must be defined and > 0");
+            if (quantumUser <= 0)
+                throw new IllegalConfigFileException("User quantum must be defined and > 0");
+
             if (ownerIds.size() != processCount)
                 throw new IllegalConfigFileException("Wrong number of owner IDs");
+            if (maxTimes.size() != processCount)
+                throw new IllegalConfigFileException("Wrong number of maximum runtimes");
 
             initialized = true;
 
@@ -114,46 +130,41 @@ public class Scheduling {
 
         for (int i = 0; i < processCount; i++) {
             int runTime = (int)Math.max(1, rng.nextGaussian() * runTimeStddev + runTimeMean);
-            int blockTime = (int)Math.max(1, rng.nextGaussian() * blockTimeStddev + blockTimeMean);
-            processes.addElement(new Process(runTime, blockTime, ownerIds.get(i)));
+            int blockTime = (int)Math.max(0, rng.nextGaussian() * blockTimeStddev + blockTimeMean);
+            processes.addElement(new Process(maxTimes.get(i), runTime, blockTime, ownerIds.get(i)));
         }
         SchedulingAlgorithm algorithm = new SchedulingAlgorithm("Summary-Processes");
-        Results result = algorithm.run(maxRuntime, quantum, processes);
+        Results result = algorithm.run(maxRuntime, quantumProcess, quantumUser, processes);
 
 
         //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
         PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
         out.println("Scheduling Name: " + result.schedulingName);
         out.println("Simulation Run Time: " + result.totalTime);
-        out.println("Mean: " + runTimeMean);
-        out.println("Standard Deviation: " + runTimeStddev);
-        out.println("Process #\t\tRuntime\tBlock time\tActual runtime\tTimes blocked");
+        out.println();
+        out.println("Quantum for processes: " + quantumProcess);
+        out.println("Quantum for users: " + quantumUser);
+        out.println();
+        out.println("Mean runtime: " + runTimeMean);
+        out.println("Runtime standard deviation: " + runTimeStddev);
+        out.println("Mean block time: " + blockTimeMean);
+        out.println("Block time standard deviation: " + blockTimeStddev);
+        out.println();
+        out.println("ID\tUserID\tRuntime\tBlock time\tTotal runtime\tTimes blocked");
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.elementAt(i);
             out.print(i);
-            if (i < 100) {
-                out.print("\t\t");
-            } else {
-                out.print("\t");
-            }
+            out.print("\t");
+            out.print(process.userId);
+            out.print("\t\t");
             out.print(process.runTime);
-            if (process.runTime < 100) {
-                out.print(" (ms)\t\t");
-            } else {
-                out.print(" (ms)\t");
-            }
+            out.print(" ms\t");
             out.print(process.blockTime);
-            if (process.blockTime < 100) {
-                out.print(" (ms)\t\t");
-            } else {
-                out.print(" (ms)\t");
-            }
+            out.print(" ms\t\t");
             out.print(process.totalRunTime);
-            if (process.totalRunTime < 100) {
-                out.print(" (ms)\t\t");
-            } else {
-                out.print(" (ms)\t");
-            }
+            out.print(" ms / ");
+            out.print(process.maxTime);
+            out.print(" ms\t");
             out.println(process.numBlocked + " times");
         }
         out.close();

@@ -18,5 +18,9 @@ loads defined by the instructor.
 * Use generics
 * Better exception handling
 * Updated documentation
-* Add quantum parameter
-* Add owner ID parameter
+* Added user ID parameter
+* Added quantum parameter
+* Added quantum parameter for users as well
+* (TO-DO #1, #2) Renamed some parameters
+* (TO-DO #3) Renamed `Run` method to `run`, added comments
+* (TO-DO #4, #5) Added `block_time_average` and `block_time_stddev` parameters
