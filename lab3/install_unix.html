@@ -268,23 +268,9 @@ sched.tgz
 
 archive which contains all the other files.
 <tr>
-<td>Common.java
-<br>Process.java
-<br>Results.java
-<br>Scheduling.java
-<br>SchedulingAlgorithm.java
-<br>sProcess.java
+<td>src/**/*.java
 <td valign="top">
-Java source files (*.java)
-<tr>
-<td>Common.class
-<br>Process.class
-<br>Results.class
-<br>Scheduling.class
-<br>SchedulingAlgorithm.class
-<br>sProcess.class
-<td valign="top">
-Compiled Java class files (*.class)
+Java source files
 <tr>
 <td>scheduling.conf
 <td>Sample configuration file
@@ -302,14 +288,7 @@ for Copying, Distribution, and Modification
 
 <h2>Compilation</h2>
 
-<p>
-The distribution includes compiled class files as
-well as the source java files.  You should not need
-to recompile unless you decide to change the code.
-If you wish to compile the code, 
-the following commands should work if you're using
-a Java compiler that accepts the normal "javac" command
-line.
+<p>Create a directory for the compiled .class files, e.g. 'build'</p>
 
 
 <p>
@@ -325,7 +304,7 @@ If you're using sh, ksh, bash:
 <blockquote><pre>
 $ CLASSPATH=.
 $ export CLASSPATH
-$ javac -nowarn *.java
+$ javac src/**/*.java -d build
 </pre></blockquote>
 
 <p>
@@ -333,15 +312,9 @@ If you're using csh, tcsh:
 </p>
 <blockquote><pre>
 % set CLASSPATH=.
-% javac -nowarn *.java
+% javac src/**/*.java -d build
 </pre></blockquote>
 
-
-The <tt>-nowarn</tt> flag supresses warning messges, of which
-there may be several.  For backward compatability we use only
-those features of Java which have been present from the beginning,
-some of which are deprecated and are usually reported by the 
-compiler with warning messages.
 
 <h2>Test</h2>
 
@@ -351,7 +324,7 @@ To test the program, enter the following commands.
 
 
 <blockquote><pre>
-$ java Scheduling scheduling.conf
+$ java -cp build/ com.prenticehall.moss.sched.Scheduling scheduling.conf
 </pre></blockquote>
 
 

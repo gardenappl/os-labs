@@ -1,3 +1,5 @@
+# Task 3
+
 The scheduling simulator illustrates the behavior of scheduling 
 algorithms against a simulated mix of process loads. The user can 
 specify the number of processes, the mean and standard deviation 
@@ -6,3 +8,11 @@ duration of the simulation. At the end of the simulation a
 statistical summary is presented. Students may also be asked to 
 write their own scheduling algorithms to be used with process 
 loads defined by the instructor. 
+
+### My changes and improvements
+
+* Moved code to the package `com.prenticehall.moss.sched`
+* Got rid of useless `Common` utlities class
+* Use generics
+* Better exception handling
+* Updated documentation
