@@ -22,54 +22,53 @@ public class Scheduling {
     private static final Vector<Process> processVector = new Vector<>();
     private static Results result = new Results("null", "null", 0);
     private static final String resultsFile = "Summary-Results";
+    private static final Random rng = new Random();
 
     private static void Init(String file) {
         File f = new File(file);
         String line;
-        String tmp;
-        int cputime = 0;
-        int ioblocking = 0;
-        double X = 0.0;
+        int lineNumber = 0;
 
         try {
             BufferedReader in = new BufferedReader(new FileReader(f));
             //DataInputStream in = new DataInputStream(new FileInputStream(f));
             while ((line = in.readLine()) != null) {
+                lineNumber++;
                 if (line.startsWith("numprocess")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    processnum = Common.s2i(st.nextToken());
+                    processnum = Integer.parseInt(st.nextToken());
                 }
                 if (line.startsWith("meandev")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    meanDev = Common.s2i(st.nextToken());
+                    meanDev = Integer.parseInt(st.nextToken());
                 }
                 if (line.startsWith("standdev")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    standardDev = Common.s2i(st.nextToken());
+                    standardDev = Integer.parseInt(st.nextToken());
                 }
                 if (line.startsWith("process")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    ioblocking = Common.s2i(st.nextToken());
-                    X = Common.R1();
-                    while (X == -1.0) {
-                        X = Common.R1();
-                    }
-                    X = X * standardDev;
-                    cputime = (int) X + meanDev;
+                    int ioblocking = Integer.parseInt(st.nextToken());
+                    int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
                     processVector.addElement(new Process(cputime, ioblocking, 0, 0, 0));
                 }
                 if (line.startsWith("runtime")) {
                     StringTokenizer st = new StringTokenizer(line);
                     st.nextToken();
-                    runtime = Common.s2i(st.nextToken());
+                    runtime = Integer.parseInt(st.nextToken());
                 }
             }
             in.close();
-        } catch (IOException e) { /* Handle exceptions */ }
+        } catch (NumberFormatException e) {
+            System.err.printf("Invalid number on line %d of %s:\n", lineNumber, file);
+            System.err.println(e.getLocalizedMessage());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void debug() {
@@ -87,9 +86,6 @@ public class Scheduling {
     }
 
     public static void main(String[] args) {
-        for (int i = 0; i < 100; i++)
-            System.out.println(Common.R1());
-        
         int i = 0;
 
         if (args.length != 1) {
@@ -110,12 +106,7 @@ public class Scheduling {
         if (processVector.size() < processnum) {
             i = 0;
             while (processVector.size() < processnum) {
-                double X = Common.R1();
-                while (X == -1.0) {
-                    X = Common.R1();
-                }
-                X = X * standardDev;
-                int cputime = (int) X + meanDev;
+                int cputime = (int)(rng.nextGaussian() * standardDev + meanDev);
                 processVector.addElement(new Process(cputime, i * 100, 0, 0, 0));
                 i++;
             }
