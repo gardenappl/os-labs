@@ -20,9 +20,9 @@ public class Scheduling {
   private static int meanDev = 1000;
   private static int standardDev = 100;
   private static int runtime = 1000;
-  private static Vector processVector = new Vector();
+  private static final Vector<sProcess> processVector = new Vector<>();
   private static Results result = new Results("null","null",0);
-  private static String resultsFile = "Summary-Results";
+  private static final String resultsFile = "Summary-Results";
 
   private static void Init(String file) {
     File f = new File(file);
@@ -33,8 +33,8 @@ public class Scheduling {
     double X = 0.0;
 
     try {   
-      //BufferedReader in = new BufferedReader(new FileReader(f));
-      DataInputStream in = new DataInputStream(new FileInputStream(f));
+      BufferedReader in = new BufferedReader(new FileReader(f));
+      //DataInputStream in = new DataInputStream(new FileInputStream(f));
       while ((line = in.readLine()) != null) {
         if (line.startsWith("numprocess")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -81,7 +81,7 @@ public class Scheduling {
     System.out.println("standdev " + standardDev);
     int size = processVector.size();
     for (i = 0; i < size; i++) {
-      sProcess process = (sProcess) processVector.elementAt(i);
+      sProcess process = processVector.elementAt(i);
       System.out.println("process " + i + " " + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.numblocked);
     }
     System.out.println("runtime " + runtime);
