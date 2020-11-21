@@ -12,6 +12,7 @@ class Process {
     public final int blockTime;
     public int currentBlockTime = 0;
     public int numBlocked = 0;
+    //New parameter
     public final int userId;
 
     Process(int maxTime, int runTime, int blockTime, int userId) {

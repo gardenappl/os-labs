@@ -22,6 +22,7 @@ public class Scheduling {
     private int blockTimeMean;
     private int blockTimeStddev;
     private int processCount;
+    //New parameters
     private int quantumProcess;
     private int quantumUser;
     private ArrayList<Integer> ownerIds = new ArrayList<>();
