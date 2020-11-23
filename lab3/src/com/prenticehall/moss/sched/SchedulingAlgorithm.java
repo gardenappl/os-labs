@@ -128,22 +128,31 @@ public class SchedulingAlgorithm {
                     processId--;
                     processes.remove(process);
 
-                    processRoundRobins.get(process.userId).removeFirst();
-                    if (processRoundRobins.get(process.userId).isEmpty()) {
+                    Deque<Integer> processRoundRobin = processRoundRobins.get(process.userId);
+
+                    processRoundRobin.removeFirst();
+                    log("Next process in queue: %s", getProcessInfo(processRoundRobin.peekFirst()));
+
+                    if (processRoundRobin.isEmpty()) {
                         log("User %d now has 0 ready processes, removing from queue...", process.userId);
                         userRoundRobin.removeFirst();
+                        log("Next user in queue: ", userRoundRobin.peekFirst());
                     }
                 } else if (isBlockedIO(process)) {
                     //Process no longer ready
                     process.numBlocked++;
                     processQuantTimes.put(process.userId, 0);
 
-                    log("Process is now blocked, removing from queue: %s", getProcessInfo(processId));
+                    Deque<Integer> processRoundRobin = processRoundRobins.get(process.userId);
 
-                    processRoundRobins.get(process.userId).removeFirst();
-                    if (processRoundRobins.get(process.userId).isEmpty()) {
+                    log("Process is now blocked, removing from queue: %s", getProcessInfo(processId));
+                    processRoundRobin.removeFirst();
+                    log("Next process in queue: %s", getProcessInfo(processRoundRobin.peekFirst()));
+
+                    if (processRoundRobin.isEmpty()) {
                         log("User %d now has 0 ready processes, removing from queue...", process.userId);
                         userRoundRobin.removeFirst();
+                        log("Next user in queue: ", userRoundRobin.peekFirst());
                     }
                 }
             } /*else {
@@ -153,8 +162,14 @@ public class SchedulingAlgorithm {
         result.totalTime++;
     }
 
-    private String getProcessInfo(int processId) {
+    private String getProcessInfo(Integer processId) {
+        if (processId == null)
+            return "(null id)";
+
         Process process = processes.get(processId);
+        if (process == null)
+            return "(null)";
+
         return String.format("Process #%d (total %d/%d ms, running %d/%d ms, blocking %d/%d ms, owner: %d)",
                 processId, process.totalRunTime, process.maxTime,
                 process.currentRunTime, process.runTime,
@@ -214,7 +229,7 @@ public class SchedulingAlgorithm {
         int processId = processRoundRobin.removeFirst();
         processRoundRobin.addLast(processId);
 
-        int nextProcessId = processRoundRobin.peekFirst();
+        Integer nextProcessId = processRoundRobin.peekFirst();
         log("Scheduling process %s", getProcessInfo(nextProcessId));
         return nextProcessId;
     }
