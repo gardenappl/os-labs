@@ -13,8 +13,8 @@ public class Kernel extends Thread {
     private String command_file;
     private String config_file;
     private ControlPanel controlPanel;
-    private Vector memVector = new Vector();
-    private Vector instructVector = new Vector();
+    private Vector<Page> memVector = new Vector();
+    private Vector<Instruction> instructVector = new Vector();
     private String status;
     private boolean doStdoutLog = false;
     private boolean doFileLog = false;
@@ -315,14 +315,16 @@ public class Kernel extends Thread {
     }
 
     public void step() {
-        int i = 0;
-
         Instruction instruct = (Instruction) instructVector.elementAt(runs);
         controlPanel.instructionValueLabel.setText(instruct.inst);
         controlPanel.addressValueLabel.setText(Long.toString(instruct.addr, addressradix));
         if (controlPanel.pageFaultValueLabel.getText().equals("YES")) {
             controlPanel.pageFaultValueLabel.setText("NO");
         }
+        
+        int swappedOutPageNum = -1;
+        int swappedInPageNum = -1;
+        
         if (instruct.inst.startsWith("READ")) {
             Page page = (Page) memVector.elementAt(PageUtils.pageNum(instruct.addr, virtPageNum, block));
             if (page.physical == -1) {
@@ -332,8 +334,8 @@ public class Kernel extends Thread {
                 if (doStdoutLog) {
                     System.out.println("READ " + Long.toString(instruct.addr, addressradix) + " ... page fault");
                 }
-                int replacePageNum = PageUtils.pageNum(instruct.addr, virtPageNum, block);
-                PageFault.replacePage(memVector, virtPageNum, replacePageNum, controlPanel);
+                swappedInPageNum = PageUtils.pageNum(instruct.addr, virtPageNum, block);
+                swappedOutPageNum = PageFault.replacePage(memVector, virtPageNum, swappedInPageNum);
                 controlPanel.pageFaultValueLabel.setText("YES");
             } else {
                 if (doFileLog) {
@@ -355,8 +357,8 @@ public class Kernel extends Thread {
                 if (doStdoutLog) {
                     System.out.println("WRITE " + Long.toString(instruct.addr, addressradix) + " ... page fault");
                 }
-                int replacePageNum = PageUtils.pageNum(instruct.addr, virtPageNum, block);
-                PageFault.replacePage(memVector, virtPageNum, replacePageNum, controlPanel);
+                swappedInPageNum = PageUtils.pageNum(instruct.addr, virtPageNum, block);
+                swappedOutPageNum = PageFault.replacePage(memVector, virtPageNum, swappedInPageNum);
                 controlPanel.pageFaultValueLabel.setText("YES");
             } else {
                 if (doFileLog) {
@@ -369,7 +371,7 @@ public class Kernel extends Thread {
             page.M = 1;
             page.lastTouchTime = 0;
         }
-        for (i = 0; i < virtPageNum; i++) {
+        for (int i = 0; i < virtPageNum; i++) {
             Page page = (Page) memVector.elementAt(i);
             if (page.R == 1 && page.lastTouchTime == 10) {
                 page.R = 0;
@@ -378,6 +380,19 @@ public class Kernel extends Thread {
                 page.inMemTime = page.inMemTime + 10;
                 page.lastTouchTime = page.lastTouchTime + 10;
             }
+        }
+        
+        if (swappedOutPageNum != -1) {
+            System.err.println("swapped out " + swappedOutPageNum + " for " + swappedInPageNum);
+            controlPanel.removePhysicalPage(swappedOutPageNum);
+            controlPanel.addPhysicalPage(swappedInPageNum, getPage(swappedInPageNum).physical);
+            
+            Page swappedOutPage = memVector.get(swappedOutPageNum);
+            swappedOutPage.inMemTime = 0;
+            swappedOutPage.lastTouchTime = 0;
+            swappedOutPage.R = 0;
+            swappedOutPage.M = 0;
+            swappedOutPage.physical = -1;
         }
 
         controlPanel.paintPage(getPage(PageUtils.pageNum(instruct.addr, virtPageNum, block)));
