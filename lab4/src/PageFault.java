@@ -37,13 +37,13 @@ public class PageFault {
     public static int replacePage(Vector<Page> mem, int virtPageNum, int replacePageNum) {
 
         Page lruPage = null;
-        int lruTouchTime = 0;
+        int lruTouchTime = Integer.MAX_VALUE;
         
         for (int i = 0; i < virtPageNum; i++) {
             Page page = mem.elementAt(i);
             
             if (page.physical != -1) {
-                if (page.lastTouchTime >= lruTouchTime) {
+                if (page.lastTouchTime < lruTouchTime) {
                     lruPage = page;
                     lruTouchTime = page.lastTouchTime;
                 }

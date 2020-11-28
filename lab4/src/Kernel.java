@@ -346,7 +346,7 @@ public class Kernel extends Thread {
                 }
             }
             page.R = 1;
-            page.lastTouchTime = 0;
+            page.lastTouchTime = runs + 1;
         }
         if (instruct.inst.startsWith("WRITE")) {
             Page page = (Page) memVector.elementAt(PageUtils.pageNum(instruct.addr, virtPageNum, block));
@@ -369,16 +369,15 @@ public class Kernel extends Thread {
                 }
             }
             page.M = 1;
-            page.lastTouchTime = 0;
+            page.lastTouchTime = runs + 1;
         }
         for (int i = 0; i < virtPageNum; i++) {
-            Page page = (Page) memVector.elementAt(i);
+            Page page = memVector.elementAt(i);
             if (page.R == 1 && page.lastTouchTime == 10) {
                 page.R = 0;
             }
             if (page.physical != -1) {
                 page.inMemTime = page.inMemTime + 10;
-                page.lastTouchTime = page.lastTouchTime + 10;
             }
         }
         
@@ -388,7 +387,6 @@ public class Kernel extends Thread {
             
             Page swappedOutPage = memVector.get(swappedOutPageNum);
             swappedOutPage.inMemTime = 0;
-            swappedOutPage.lastTouchTime = 0;
             swappedOutPage.R = 0;
             swappedOutPage.M = 0;
             swappedOutPage.physical = -1;
