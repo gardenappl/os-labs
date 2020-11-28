@@ -1,6 +1,6 @@
 import java.util.Vector;
 
-public class Virtual2Physical 
+public class PageUtils
 {
   public static int pageNum ( long memaddr , int numpages , long block ) 
   {
