@@ -1526,322 +1526,322 @@ public class ControlPanel extends Frame
     }
     else if ( e.target == b0 ) 
     {
-      kernel.getPage(0);
+      paintPage(kernel.getPage(0));
       return true;
     }
     else if ( e.target == b1 ) 
     {
-      kernel.getPage(1);
+      paintPage(kernel.getPage(1));
       return true;
     }
     else if ( e.target == b2 ) 
     {
-      kernel.getPage(2);
+      paintPage(kernel.getPage(2));
       return true;
     }
     else if ( e.target == b3 ) 
     {
-      kernel.getPage(3);
+      paintPage(kernel.getPage(3));
       return true;
     }
     else if ( e.target == b4 ) 
     {
-      kernel.getPage(4);
+      paintPage(kernel.getPage(4));
       return true;
     }
     else if ( e.target == b5 ) 
     {
-      kernel.getPage(5);
+      paintPage(kernel.getPage(5));
       return true;
     }
     else if ( e.target == b6 ) 
     {
-      kernel.getPage(6);
+      paintPage(kernel.getPage(6));
       return true;
     }
     else if ( e.target == b7 ) 
     {
-      kernel.getPage(7);
+      paintPage(kernel.getPage(7));
       return true;
     }
     else if ( e.target == b8 ) 
     {
-      kernel.getPage(8);
+      paintPage(kernel.getPage(8));
       return true;
     }
     else if ( e.target == b9 ) 
     {
-      kernel.getPage(9);
+      paintPage(kernel.getPage(9));
       return true;
     }
     else if ( e.target == b10 ) 
     {
-      kernel.getPage(10);
+      paintPage(kernel.getPage(10));
       return true;
     }
     else if ( e.target == b11 ) 
     {
-      kernel.getPage(11);
+      paintPage(kernel.getPage(11));
       return true;
     }
     else if ( e.target == b12 ) 
     {
-      kernel.getPage(12);
+      paintPage(kernel.getPage(12));
       return true;
     }
     else if ( e.target == b13 ) 
     {
-      kernel.getPage(13);
+      paintPage(kernel.getPage(13));
       return true;
     }
     else if ( e.target == b14 ) 
     {
-      kernel.getPage(14);
+      paintPage(kernel.getPage(14));
       return true;
     }
     else if ( e.target == b15 ) 
     {
-      kernel.getPage(15);
+      paintPage(kernel.getPage(15));
       return true;
     }
     else if ( e.target == b16 ) 
     {
-      kernel.getPage(16);
+      paintPage(kernel.getPage(16));
       return true;
     }
     else if ( e.target == b17 ) 
     {
-      kernel.getPage(17);
+      paintPage(kernel.getPage(17));
       return true;
     }
     else if ( e.target == b18 ) 
     {
-      kernel.getPage(18);
+      paintPage(kernel.getPage(18));
       return true;
     }
     else if ( e.target == b19 ) 
     {
-      kernel.getPage(19);
+      paintPage(kernel.getPage(19));
       return true;
     }
     else if ( e.target == b20 ) 
     {
-      kernel.getPage(20);
+      paintPage(kernel.getPage(20));
       return true;
     }
     else if ( e.target == b21 ) 
     {
-      kernel.getPage(21);
+      paintPage(kernel.getPage(21));
       return true;
     }
     else if ( e.target == b22 ) 
     {
-      kernel.getPage(22);
+      paintPage(kernel.getPage(22));
       return true;
     }
     else if ( e.target == b23 ) 
     {
-      kernel.getPage(23);
+      paintPage(kernel.getPage(23));
       return true;
     }
     else if ( e.target == b24 ) 
     {
-      kernel.getPage(24);
+      paintPage(kernel.getPage(24));
       return true;
     }
     else if ( e.target == b25 ) 
     {
-      kernel.getPage(25);
+      paintPage(kernel.getPage(25));
       return true;
     }
     else if ( e.target == b26 ) 
     {
-      kernel.getPage(26);
+      paintPage(kernel.getPage(26));
       return true;
     }
     else if ( e.target == b27 ) 
     {
-      kernel.getPage(27);
+      paintPage(kernel.getPage(27));
       return true;
     }
     else if ( e.target == b28 ) 
     {
-      kernel.getPage(28);
+      paintPage(kernel.getPage(28));
       return true;
     }
     else if ( e.target == b29 ) 
     {
-      kernel.getPage(29);
+      paintPage(kernel.getPage(29));
       return true;
     }
     else if ( e.target == b30 ) 
     {
-      kernel.getPage(30);
+      paintPage(kernel.getPage(30));
       return true;
     }
     else if ( e.target == b31 ) 
     {
-      kernel.getPage(31);
+      paintPage(kernel.getPage(31));
       return true;
     }
     else if ( e.target == b32 ) 
     {
-      kernel.getPage(32);
+      paintPage(kernel.getPage(32));
       return true;
     }
     else if ( e.target == b33 ) 
     {
-      kernel.getPage(33);
+      paintPage(kernel.getPage(33));
       return true;
     }
     else if ( e.target == b34 ) 
     {
-      kernel.getPage(34);
+      paintPage(kernel.getPage(34));
       return true;
     }
     else if ( e.target == b35 ) 
     {
-      kernel.getPage(35);
+      paintPage(kernel.getPage(35));
       return true;
     }
     else if ( e.target == b36 ) 
     {
-      kernel.getPage(36);
+      paintPage(kernel.getPage(36));
       return true;
     }
     else if ( e.target == b37 ) 
     {
-      kernel.getPage(37);
+      paintPage(kernel.getPage(37));
       return true;
     }
     else if ( e.target == b38 ) 
     {
-      kernel.getPage(38);
+      paintPage(kernel.getPage(38));
       return true;
     }
     else if ( e.target == b39 ) 
     {
-      kernel.getPage(39);
+      paintPage(kernel.getPage(39));
       return true;
     }
     else if ( e.target == b40 ) 
     {
-      kernel.getPage(40);
+      paintPage(kernel.getPage(40));
       return true;
     }
     else if ( e.target == b41 ) 
     {
-      kernel.getPage(41);
+      paintPage(kernel.getPage(41));
       return true;
     }
     else if ( e.target == b42 ) 
     {
-      kernel.getPage(42);
+      paintPage(kernel.getPage(42));
       return true;
     }
     else if ( e.target == b43 ) 
     {
-      kernel.getPage(43);
+      paintPage(kernel.getPage(43));
       return true;
     }
     else if ( e.target == b44 ) 
     {
-      kernel.getPage(44);
+      paintPage(kernel.getPage(44));
       return true;
     }
     else if ( e.target == b45 ) 
     {
-      kernel.getPage(45);
+      paintPage(kernel.getPage(45));
       return true;
     }
     else if ( e.target == b46 ) 
     {
-      kernel.getPage(46);
+      paintPage(kernel.getPage(46));
       return true;
     }
     else if ( e.target == b47 ) 
     {
-      kernel.getPage(47);
+      paintPage(kernel.getPage(47));
       return true;
     }
     else if ( e.target == b48 ) 
     {
-      kernel.getPage(48);
+      paintPage(kernel.getPage(48));
       return true;
     }
     else if ( e.target == b49 ) 
     {
-      kernel.getPage(49);
+      paintPage(kernel.getPage(49));
       return true;
     }
     else if ( e.target == b50 ) 
     {
-      kernel.getPage(50);
+      paintPage(kernel.getPage(50));
       return true;
     }
     else if ( e.target == b51 ) 
     {
-      kernel.getPage(51);
+      paintPage(kernel.getPage(51));
       return true;
     }
     else if ( e.target == b52 ) 
     {
-      kernel.getPage(52);
+      paintPage(kernel.getPage(52));
       return true;
     }
     else if ( e.target == b53 ) 
     {
-      kernel.getPage(53);
+      paintPage(kernel.getPage(53));
       return true;
     }
     else if ( e.target == b54 ) 
     {
-      kernel.getPage(54);
+      paintPage(kernel.getPage(54));
       return true;
     }
     else if ( e.target == b55 ) 
     {
-      kernel.getPage(55);
+      paintPage(kernel.getPage(55));
       return true;
     }
     else if ( e.target == b56 ) 
     {
-      kernel.getPage(56);
+      paintPage(kernel.getPage(56));
       return true;
     }
     else if ( e.target == b57 ) 
     {
-      kernel.getPage(57);
+      paintPage(kernel.getPage(57));
       return true;
     }
     else if ( e.target == b58 ) 
     {
-      kernel.getPage(58);
+      paintPage(kernel.getPage(58));
       return true;
     }
     else if ( e.target == b59 ) 
     {
-      kernel.getPage(59);
+      paintPage(kernel.getPage(59));
       return true;
     }
     else if ( e.target == b60 ) 
     {
-      kernel.getPage(60);
+      paintPage(kernel.getPage(60));
       return true;
     }
     else if ( e.target == b61 ) 
     {
-      kernel.getPage(61);
+      paintPage(kernel.getPage(61));
       return true;
     }
     else if ( e.target == b62 ) 
     {
-      kernel.getPage(62);
+      paintPage(kernel.getPage(62));
       return true;
     }
     else if ( e.target == b63 ) 
     {
-      kernel.getPage(63);
+      paintPage(kernel.getPage(63));
       return true;
     }
     else

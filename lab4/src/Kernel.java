@@ -345,10 +345,9 @@ public class Kernel extends Thread
     controlPanel = newControlPanel ;
   }
 
-  public void getPage(int pageNum) 
+  public Page getPage(int pageNum)
   {
-    Page page = ( Page ) memVector.elementAt( pageNum );
-    controlPanel.paintPage( page );
+    return ( Page ) memVector.elementAt( pageNum );
   }
 
   private void printLogFile(String message)
@@ -409,8 +408,7 @@ public class Kernel extends Thread
     Instruction instruct = ( Instruction ) instructVector.elementAt( runs );
     controlPanel.instructionValueLabel.setText( instruct.inst );
     controlPanel.addressValueLabel.setText( Long.toString( instruct.addr , addressradix ) );
-    getPage( Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) );
-    if ( controlPanel.pageFaultValueLabel.getText() == "YES" ) 
+    if (controlPanel.pageFaultValueLabel.getText().equals("YES"))
     {
       controlPanel.pageFaultValueLabel.setText( "NO" );
     }
@@ -486,6 +484,8 @@ public class Kernel extends Thread
         page.lastTouchTime = page.lastTouchTime + 10;
       }
     }
+
+    controlPanel.paintPage(getPage(Virtual2Physical.pageNum(instruct.addr, virtPageNum, block )));
     runs++;
     controlPanel.timeValueLabel.setText( Integer.toString( runs*10 ) + " (ns)" );
   }
