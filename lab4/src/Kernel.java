@@ -425,7 +425,8 @@ public class Kernel extends Thread
         {
           System.out.println( "READ " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
+        int replacePageNum = Virtual2Physical.pageNum(instruct.addr, virtPageNum, block);
+        PageFault.replacePage( memVector, virtPageNum, replacePageNum, controlPanel, false);
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
@@ -455,7 +456,9 @@ public class Kernel extends Thread
         {
            System.out.println( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );          controlPanel.pageFaultValueLabel.setText( "YES" );
+        int replacePageNum = Virtual2Physical.pageNum(instruct.addr, virtPageNum, block);
+        PageFault.replacePage( memVector, virtPageNum, replacePageNum, controlPanel, true);
+        controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {
