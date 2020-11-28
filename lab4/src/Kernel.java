@@ -383,7 +383,6 @@ public class Kernel extends Thread {
         }
         
         if (swappedOutPageNum != -1) {
-            System.err.println("swapped out " + swappedOutPageNum + " for " + swappedInPageNum);
             controlPanel.removePhysicalPage(swappedOutPageNum);
             controlPanel.addPhysicalPage(swappedInPageNum, getPage(swappedInPageNum).physical);
             

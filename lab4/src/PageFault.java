@@ -40,7 +40,7 @@ public class PageFault {
         int lruTouchTime = 0;
         
         for (int i = 0; i < virtPageNum; i++) {
-            Page page = (Page) mem.elementAt(i);
+            Page page = mem.elementAt(i);
             
             if (page.physical != -1) {
                 if (page.lastTouchTime >= lruTouchTime) {
@@ -49,7 +49,6 @@ public class PageFault {
                 }
             }
         }
-        System.err.println("repalce page num: " + replacePageNum);
 
         mem.elementAt(replacePageNum).physical = lruPage.physical;
         return lruPage.id;
