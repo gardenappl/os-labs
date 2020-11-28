@@ -43,6 +43,8 @@ public class PageFault {
             Page page = mem.elementAt(i);
             
             if (page.physical != -1) {
+                // lastTouchTime contains the value of "hardware" instruction counter C during last access.
+                // (see Kernel.step)
                 if (page.lastTouchTime < lruTouchTime) {
                     lruPage = page;
                     lruTouchTime = page.lastTouchTime;
