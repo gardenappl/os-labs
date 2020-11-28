@@ -1,7 +1,6 @@
 import java.lang.Thread;
 import java.io.*;
 import java.util.*;
-import Page;
 
 public class Kernel extends Thread
 {
