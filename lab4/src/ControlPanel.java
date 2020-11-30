@@ -945,6 +945,8 @@ public class ControlPanel extends Frame
 
   public void paintPage( Page page ) 
   {
+    if (page == null)
+      return;
     virtualPageValueLabel.setText( Integer.toString( page.id ) );
     physicalPageValueLabel.setText( Integer.toString( page.physical ) );
     RValueLabel.setText( Integer.toString( page.R ) );

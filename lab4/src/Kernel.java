@@ -273,6 +273,8 @@ public class Kernel extends Thread {
     }
 
     public Page getPage(int pageNum) {
+        if (pageNum >= memVector.size())
+            return null;
         return (Page) memVector.elementAt(pageNum);
     }
 
